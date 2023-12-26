@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generative AI Flask App</title>
+</head>
+<body>
+    <h1>Generative AI Text Generation</h1>
+    <form method="POST" action="/generate">
+        <label for="user_input">Enter your prompt:</label><br>
+        <textarea id="user_input" name="user_input" rows="5" cols="40"></textarea><br><br>
+        <button type="submit">Generate Text</button>
+    </form>
+    {% if generated_text %}
+        <h2>Generated Text:</h2>
+        <p>{{ generated_text }}</p>
+        <audio controls src="{{ audio_file_path }}">Your browser does not support the audio element.</audio>
+    {% endif %}
+</body>
+</html>

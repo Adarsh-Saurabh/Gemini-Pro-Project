@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Generative AI Flask App</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        textarea {
+            width: 500px;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .gen_text {
+            margin-top: 20px;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .gen_text h2 {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Generative AI Text Generation</h1>
+    <form method="POST" action="/generate">
+        {% csrf_token %}
+        <label for="user_input">Enter your prompt:</label><br>
+        <textarea id="user_input" name="user_input" rows="5" cols="40"></textarea><br><br>
+        <button type="submit">Generate Text</button>
+    </form>
+
+    {% if generated_text %}
+    <h2>Generated Text:</h2>
+    <div class="markdown-content">{{ generated_text }}</div>
+    <!-- <audio controls src="{{ audio_file_path }}">Your browser does not support the audio element.</audio> -->
+    {% endif %}
+
+    <!-- <script>
+        function speakText() {
+            const textToSpeak = document.getElementById("generated-text").textContent;
+            const speech = new SpeechSynthesisUtterance(textToSpeak);
+            speech.rate = 1.2; // Adjust speaking rate as needed
+            window.speechSynthesis.speak(speech);
+        }
+    </script> -->
+</body>
+
+</html>
