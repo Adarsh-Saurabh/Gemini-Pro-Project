@@ -65,5 +65,5 @@ def generate():
     print(generated_text)
     return render_template('index.html', generated_text=generated_text)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
