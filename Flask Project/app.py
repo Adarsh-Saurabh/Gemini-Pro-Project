@@ -1,7 +1,9 @@
 import os
 from flask import Flask, request, render_template
 import google.generativeai as genai
-import pyttsx3
+from io import BytesIO
+from PIL import Image
+
 
 app = Flask(__name__)
 
@@ -9,31 +11,59 @@ app = Flask(__name__)
 os.environ['GOOGLE_API_KEY'] = "AIzaSyDZdasVyl4z3u0VvBi0qQbuUqxnN0I4iYI"
 genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
 
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-pro-vision')
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# @app.route('/generate', methods=['POST'])
+# def generate():
+#     try:
+#         user_input = request.form['user_input']
+#         image_input = request.files['image_upload']
 
-@app.route('/generate', methods=['POST'])
+#         if image_input:
+#             # Assuming you want to use both user input and the uploaded image
+#             response_content = model.generate_content([image_input, user_input], stream=True)
+#             generated_text = response_content.text
+#             print("nice")
+#         else:
+#             generated_text = "Error: No image uploaded."
+
+#     except Exception as e:
+#         generated_text = f"Error: {str(e)}"
+
+#     return render_template('index.html', generated_text=generated_text)
+
+
+@app.route('/', methods=['POST'])
 def generate():
-    user_input = request.form['user_input']
-
     try:
-        response = model.generate_content(user_input)
-        generated_text = response.text
-        print("nice")
+        user_input = request.form['user_input']
 
-        # Text-to-speech using pyttsx3
-        engine = pyttsx3.init()
-        engine.save_to_file(generated_text, 'static/output.mp3')
-        engine.runAndWait()
+        # Check if 'image_upload' is in request.files
+        if 'image_upload' in request.files:
+            image_input = request.files['image_upload']
+
+            # Convert FileStorage to PIL Image
+            image_data = BytesIO(image_input.read())
+            image = Image.open(image_data)
+
+            response_content = model.generate_content([user_input, image], stream=True)
+            
+            # Resolve the response before accessing its attributes
+            response_content.resolve()
+
+            generated_text = response_content.text
+            print("nice")
+        else:
+            generated_text = "Error: No image uploaded."
 
     except Exception as e:
         generated_text = f"Error: {str(e)}"
-
-    return render_template('index.html', generated_text=generated_text, audio_file_path='/static/output.mp3')
+    print(generated_text)
+    return render_template('index.html', generated_text=generated_text)
 
 if __name__ == '__main__':
     app.run(debug=True)
